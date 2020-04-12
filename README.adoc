@@ -1,0 +1,76 @@
+= GCP sample project with Terraform and Ansible
+
+This project is used to set up a simple infrastructure configuration with Google cloud Terraform provider and Ansible
+
+== Requirements
+
+[code, bash]
+----
+terraform v0.12.0+
+google_provider 3.0.0+
+----
+
+== Preparation
+
+As GCP service accounts cannot be used to create a GCP project without parents (single projects that are not attached to any organization),
+Terraform admin project will contain only a GCS bucket to store Terraform state.
+
+. Set up the environment
++
+[code]
+----
+export TF_VAR_billing_account=YOUR_BILLING_ACCOUNT_ID
+export TF_ADMIN=${USER}-terraform-admin
+----
++
+NOTE: To see available billing accounts use `gcloud beta billing accounts list` command
++
+. Authenticate with your personal account
++
+[code, bash]
+----
+gcloud auth application-default login
+----
++
+. Set default compute zone (Frankfurt in this case)
++
+[code, bash]
+----
+gcloud config set compute/zone europe-west3
+----
++
+. Create the Terraform Admin Project
++
+[code, bash]
+----
+gcloud projects create ${TF_ADMIN} --set-as-default
+gcloud beta billing projects link ${TF_ADMIN} --billing-account ${TF_VAR_billing_account}
+----
++
+. Set up remote state in Cloud Storage
++
+[code, bash]
+----
+gsutil mb -p ${TF_ADMIN} -l EU gs://${TF_ADMIN}
+gsutil versioning set on gs://${TF_ADMIN}
+----
++
+. Configure your environment for the Google Cloud Terraform provider
++
+[code, bash]
+----
+export GOOGLE_PROJECT=${TF_ADMIN}
+----
+
+== Apply configuration
+
+. Initialize the backend: `terraform init`
+. Preview the Terraform changes: `terraform plan`
+. Apply the Terraform changes: `terraform apply`
+
+== Clean up changes
+
+Use following command: `terraform destroy`
+
+
+

@@ -102,6 +102,7 @@ ansible -i ansible/hosts -m command -a 'uname -r' gcp-website
 ----
 +
 . Execute playbook
++
 [code, bash]
 ----
 ansible-playbook -i hosts apache.yaml

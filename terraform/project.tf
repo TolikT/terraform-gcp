@@ -16,7 +16,7 @@ resource "google_project" "project" {
   billing_account = var.billing_account
 }
 
-# Services and APIs enabled within the new projec
+# Services and APIs enabled within the new project
 resource "google_project_service" "service" {
   for_each = toset([
     "compute.googleapis.com"

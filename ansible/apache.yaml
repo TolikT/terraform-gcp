@@ -1,0 +1,5 @@
+---
+- hosts: gcp-website
+  become: true
+  roles:
+  - apache

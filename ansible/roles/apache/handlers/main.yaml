@@ -1,0 +1,8 @@
+---
+- name: wait for open port
+  wait_for:
+    host: localhost
+    port: 80
+    state: started
+    delay: 0
+    timeout: 5

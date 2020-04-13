@@ -2,7 +2,9 @@
 
 This project is used to set up a simple infrastructure configuration with Google cloud Terraform provider and Ansible
 
-== Requirements
+== Terraform provisioning
+
+=== Requirements
 
 [code, bash]
 ----
@@ -10,7 +12,7 @@ terraform v0.12.0+
 google_provider 3.0.0+
 ----
 
-== Preparation
+=== Preparation
 
 As GCP service accounts cannot be used to create a GCP project without parents (single projects that are not attached to any organization),
 Terraform admin project will contain only a GCS bucket to store Terraform state.
@@ -62,15 +64,48 @@ gsutil versioning set on gs://${TF_ADMIN}
 export GOOGLE_PROJECT=${TF_ADMIN}
 ----
 
-== Apply configuration
+=== Apply configuration
 
+. Configure ssh keys: place `id_rsa.pub` to `terraform/files` directory
+and specify username environment variable
++
+[code, bash]
+----
+export TF_VAR_ssh_username=<username>
+----
++
 . Initialize the backend: `terraform init`
 . Preview the Terraform changes: `terraform plan`
 . Apply the Terraform changes: `terraform apply`
 
-== Clean up changes
+=== Clean up changes
 
 Use following command: `terraform destroy`
+
+== Ansible configuration management
+
+Terraform creates inventory `hosts` file with `gcp-website` hosts group configured
+
+. Ping target VMs
++
+[code, bash]
+----
+export ANSIBLE_HOST_KEY_CHECKING=False
+ansible -i ansible/hosts -m ping gcp-website
+----
++
+. Print kernel version
++
+[code, bash]
+----
+ansible -i ansible/hosts -m command -a 'uname -r' gcp-website
+----
++
+. Execute playbook
+[code, bash]
+----
+ansible-playbook -i hosts apache.yaml
+----
 
 
 

@@ -25,11 +25,20 @@ variable "compute_instance_prefix" {
 
 variable "compute_instance_count" {
   description = "compute instance count"
-  default     = "1"
+  default     = 3
 }
 
 variable "compute_instance_boot_disk_image" {
   description = "boot disk image"
   default     = "ubuntu-1604-xenial-v20170328"
+}
+
+variable "ssh_username" {
+  description = "ssh username"
+}
+
+variable "ssh_pub_key" {
+  description = "path to ssh public key to access target VMs"
+  default     = "files/id_rsa.pub"
 }
 

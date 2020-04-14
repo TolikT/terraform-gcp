@@ -108,5 +108,22 @@ ansible -i ansible/hosts -m command -a 'uname -r' gcp-website
 ansible-playbook -i hosts apache.yaml
 ----
 
+== Checks
 
+. Set gcloud project to created by Terraform
++
+[code, bash]
+----
+gcloud config set project <project-id>
+----
++
+. Get lb ip using command
++
+[code, bash]
+----
+gcloud compute forwarding-rules describe website-forwarding-rule
+----
++
+. Connect to test-lb-instance using ssh
+. Request site index.html a few times via `curl`
 

@@ -25,6 +25,27 @@ resource "google_compute_instance" "website-instance" {
   depends_on = [google_project_service.service]
 }
 
+resource "google_compute_instance" "test-lb-instance" {
+  project      = google_project.project.project_id
+  zone         = data.google_compute_zones.available.names[0]
+  count        = 1
+  name         = "test-lb-instance"
+  machine_type = var.compute_instance_type
+  metadata = {
+    ssh-keys = "${var.ssh_username}:${file(var.ssh_pub_key)}"
+  }
+  boot_disk {
+    initialize_params {
+      image = var.compute_instance_boot_disk_image
+    }
+  }
+  network_interface {
+    network = "default"
+    access_config {}
+  }
+  depends_on = [google_project_service.service]
+}
+
 # Allow ssh/http access
 resource "google_compute_firewall" "allow-ssh-http" {
   project = google_project.project.project_id
@@ -38,5 +59,9 @@ resource "google_compute_firewall" "allow-ssh-http" {
 
 output "instance_ext_ip" {
   value = google_compute_instance.website-instance.*.network_interface.0.access_config.0.nat_ip
+}
+
+output "test_lb_instance_ext_ip" {
+  value = google_compute_instance.test-lb-instance.0.network_interface.0.access_config.0.nat_ip
 }
 
